@@ -26,10 +26,7 @@ node index.js
 
 
 ## Link to walkthrough video demonstrating the functionality of the application (Better Quality):
-https://drive.google.com/file/d/1WMEA1FJfTRvNbD1p8CjrFqiZoC4CC9vT/view
-
-## Video of functional application(GIF):
-![Employee Tracker](Assets/images/emp-tracker.gif)
+https://drive.google.com/file/d/1xzN0oqtSLhGorFpjjDHNdIMldza2XBbW/view
 
 ## Credits
 

@@ -2,33 +2,56 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const table = require("console.table");
+const logo = require('asciiart-logo');
+const chalk = require('chalk');
+
+//Variables
+let employeeNames = [];
+let employeeRoles = [];
 
 // MySQL connection information 
 const connection = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "",
+  password: "nagesh",
   database: "employee_db"
 });
 // Create and test database connection 
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
-    startPrompt();
+    start();
 });
 
+const start = () => {
+    console.log(
+    logo({
+        name: 'Employee Tracker',
+        font: 'Standard',
+        lineChars: 10,
+        padding: 1,
+        margin: 1,
+        borderColor: 'red',
+        logoColor: 'white',
+        textColor: 'red',
+    })
+    .render()
+);
+    startPrompt();
+};
 // Function to start Inquirer prompts for user to select required action
 const startPrompt = () => {
-    console.log(`
-    --------------------------------------------
-    --------------------------------------------
+    // console.log(`
+    // --------------------------------------------
+    // --------------------------------------------
     
-        Welcome to Employee Tracker System!!!
+    //     Welcome to Employee Tracker System!!!
 
-    --------------------------------------------
-    --------------------------------------------
-    `);
+    // --------------------------------------------
+    // --------------------------------------------
+    // `);
+    
     inquirer.prompt({
         name: 'action',
         type: 'list',
@@ -255,42 +278,80 @@ const addEmployee = () => {
 
 //Function to update Employee Role'
 const updateEmpRole = () => {
-    connection.query(`SELECT e.first_name, e.last_name ,role.title
-    FROM employee e
-    INNER JOIN role ON e.role_id = role.id;`, (err,res) => {
-        if (err) throw err;
-        console.table(res);
-        inquirer.prompt([
-            {
-                name: 'name',
-                type: 'rawlist',
-                message: 'What is the last name of the employee to be updated?',
-                choices: lastNameChoices()
-                   
-            },
-            {
-                name: 'role',
-                type: 'rawlist',
-                message: "What is the employee's new title?",
-                choices: roleChoices()
+  
+    connection.query(
+        `
+        SELECT id, CONCAT(first_name,' ',last_name) AS employee
+        FROM employee
+        `,
+        (err, names) => {
+            if (err) throw err;
+
+            for (let i = 0; i < names.length; i++) {
+                employeeNames.push(names[i].employee);
             }
-        ])
-        .then((answer) => {
-            let roleId = roleChoices().indexOf(answer.role) + 1
-            let lastName = lastNameChoices().indexOf(answer.name) + 1
-            connection.query("UPDATE employee SET WHERE ?", 
-            {
-                role_id: roleId
-            },
-            {
-                last_name: lastName 
-            },
-            (err) => {
-                if (err) throw err;
-                console.table(answer);
-                startPrompt();
-            })
-        });
-    });
-}
+            connection.query(
+                `
+                SELECT id, title  
+                FROM role
+                `,
+                (err, roles) => {
+                    if (err) throw err;
+                    for (let i = 0; i < roles.length; i++) {
+                        employeeRoles.push(roles[i].title);
+                    }
+                    inquirer
+                        .prompt([{
+                            name: 'employeeName',
+                            type: 'list',
+                            message: 'Which employee name would you like to change the role for?',
+                            choices: employeeNames
+                        }, {
+                            name: 'employeeRole',
+                            type: 'list',
+                            message: 'Please select the new role for your selected employee',
+                            choices: employeeRoles
+                        }])
+                        .then((answer) => {
+
+                            // Set variable for role and employee IDs
+                            let roleID;
+                            let employeeID;
+
+                            // Get the employee.id
+                            for (i = 0; i < names.length; i++) {
+                                if (answer.employeeName == names[i].employee) {
+                                    employeeID = names[i].id;
+                                }
+                            }
+
+                            // Get the role.id
+                            for (i = 0; i < roles.length; i++) {
+                                if (answer.employeeRole == roles[i].title) {
+                                    roleID = roles[i].id;
+                                }
+                            }
+
+                            connection.query(
+                                'UPDATE employee SET ? WHERE ?', [{
+                                        role_id: roleID,
+                                    },
+                                    {
+                                        id: employeeID,
+                                    },
+                                ],
+                                (err, res) => {
+                                    if (err) return err;
+
+                                    console.log(chalk.green(`\n Employee ${answer.employeeName}, role has been updated to the title of: ${answer.employeeRole} \n`));
+                                    startPrompt();
+                                }
+                            )
+
+                        })
+                })
+
+        })
+
+};
 
