@@ -19,14 +19,14 @@ The application can be invoked by using the following command and follow the scr
 node index.js
 ```
 ## Screenshot of the application:
-![](assets/images/emp-tracker1.png)
+![](Assets/images/emp-tracker1.png)
 
 
-![](assets/images/emp-tracker2.png)
+![](Assets/images/emp-tracker2.png)
 
 
 ## Video of functional application:
-![Employee Tracker](assets/images/emp-tracker.gif)
+![Employee Tracker](Assets/images/emp-tracker.gif)
 
 ## Link to walkthrough video demonstrating the functionality of the application:
 https://drive.google.com/file/d/1WMEA1FJfTRvNbD1p8CjrFqiZoC4CC9vT/view
