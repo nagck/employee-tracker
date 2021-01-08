@@ -25,7 +25,7 @@ node index.js
 ![](Assets/images/emp-tracker2.png)
 
 
-## Link to walkthrough video demonstrating the functionality of the application (Better Quality):
+## Link to walkthrough video demonstrating the functionality of the application:
 https://drive.google.com/file/d/1xzN0oqtSLhGorFpjjDHNdIMldza2XBbW/view
 
 ## Credits
